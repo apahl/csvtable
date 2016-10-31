@@ -4,7 +4,7 @@ The values in the rows are assigned to tables as values where the keys are the c
 *Example usage:*
 
 .. code-block::
-    import tables
+    import csvtable
     var csvTbl: CSVTblReader
     var csvOut: CSVTblWriter
     let headers = csvTbl.open("test.csv")
