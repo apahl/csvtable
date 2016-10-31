@@ -18,6 +18,7 @@ The values in the rows are assigned to tables as values where the keys are the c
 
 import tables
 from strutils import join, split
+export tables
 
 type
   CSVTblHandler = object of RootObj
