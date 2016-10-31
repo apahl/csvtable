@@ -1,0 +1,6 @@
+nimcache/
+.vscode/
+bin/
+tmp.csv
+csvtable
+nimsuggest.*
