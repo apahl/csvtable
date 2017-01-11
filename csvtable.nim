@@ -1,4 +1,4 @@
-##[Tools for handling CSV files with an API similar to Python's CSVDictReder and -Writer.
+##[Tools for handling CSV files with an API similar to Python's CSVDictReader and -Writer.
 The values in the rows are assigned to tables as values where the keys are the corresponding headers.
 
 *Example usage:*
@@ -17,14 +17,14 @@ The values in the rows are assigned to tables as values where the keys are the c
 ]##
 
 import tables
-from strutils import join, split
+import strutils
 export tables
 
 type
   CSVTblHandler = object of RootObj
     f: File
-    filen: string
-    isOpen: bool
+    filen*: string
+    isOpen*: bool
     sep*: char
     headers*: seq[string]
 
@@ -111,6 +111,7 @@ proc close*[T: CSVTblReader | CSVTblWriter](csvTbl: var T) =
 when isMainModule:
   var csvTbl: CSVTblReader
   var csvOut: CSVTblWriter
+  echo csvOut.isOpen
   let headers = csvTbl.open("test.csv")
   echo headers
   csvOut.open("tmp.csv", headers)

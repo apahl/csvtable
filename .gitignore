@@ -1,6 +1,6 @@
 nimcache/
 .vscode/
+doc/
 bin/
 tmp.csv
-csvtable
 nimsuggest.*
