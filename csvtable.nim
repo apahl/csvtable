@@ -44,13 +44,13 @@ proc open*(csvTbl: var CSVTblReader, filen: string, sep='\t'): seq[string] =
     result.add(header)
   csvTbl.headers = result
 
-iterator items*(csvTbl: var CSVTblReader): Table[string, string] =
+iterator items*(csvTbl: var CSVTblReader): TableRef[string, string] =
   ##[Reads the csv file line by line and returns a table for each line
   where the keys are the headers and the values are the values from the line.
   Closes the file when done.]##
   if csvTbl.isOpen:
     for line in csvTbl.f.lines:
-      var result = initTable[string, string]()
+      var result = newTable[string, string]()
       let s = line.split(csvTbl.sep)
       for idx, val in s:
         if val.len != 0:
@@ -61,14 +61,14 @@ iterator items*(csvTbl: var CSVTblReader): Table[string, string] =
   else:
     raise newException(IOError, "file is not open. Read headers first.")
 
-iterator pairs*(csvTbl: var CSVTblReader): (int, Table[string, string]) =
+iterator pairs*(csvTbl: var CSVTblReader): (int, TableRef[string, string]) =
   ##[Reads the csv file line by line and returns the index and a table for each line
   where the keys are the headers and the values are the values from the line.
   Closes the file when done.]##
   if csvTbl.isOpen:
     var idx = -1
     for line in csvTbl.f.lines:
-      var result = initTable[string, string]()
+      var result = newTable[string, string]()
       let s = line.split(csvTbl.sep)
       for idx, val in s:
         if val.len != 0:
@@ -90,7 +90,7 @@ proc open*(csvTbl: var CSVTblWriter, filen: string, headers: seq[string], sep='\
   let line = headers.join($sep) & "\n"
   csvTbl.f.write(line)
 
-proc writeRow*(csvTbl: CSVTblWriter, row: Table[string, string]) =
+proc writeRow*(csvTbl: CSVTblWriter, row: TableRef[string, string]) =
   ##[Writes a row of values in the columns specified by the table.
   Keeps the file open, it needs to be explicitly closed.]##
   var line: seq[string] = @[]
@@ -111,7 +111,6 @@ proc close*[T: CSVTblReader | CSVTblWriter](csvTbl: var T) =
 when isMainModule:
   var csvTbl: CSVTblReader
   var csvOut: CSVTblWriter
-  echo csvOut.isOpen
   let headers = csvTbl.open("test.csv")
   echo headers
   csvOut.open("tmp.csv", headers)
