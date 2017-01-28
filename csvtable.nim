@@ -44,42 +44,6 @@ proc open*(csvTbl: var CSVTblReader, filen: string, sep='\t'): seq[string] =
     result.add(header)
   csvTbl.headers = result
 
-iterator items*(csvTbl: var CSVTblReader): TableRef[string, string] =
-  ##[Reads the csv file line by line and returns a table for each line
-  where the keys are the headers and the values are the values from the line.
-  Closes the file when done.]##
-  if csvTbl.isOpen:
-    for line in csvTbl.f.lines:
-      var result = newTable[string, string]()
-      let s = line.split(csvTbl.sep)
-      for idx, val in s:
-        if val.len != 0:
-          result[csvTbl.headers[idx]] = val
-      yield result
-    csvTbl.f.close
-    csvTbl.isOpen = false
-  else:
-    raise newException(IOError, "file is not open. Read headers first.")
-
-iterator pairs*(csvTbl: var CSVTblReader): (int, TableRef[string, string]) =
-  ##[Reads the csv file line by line and returns the index and a table for each line
-  where the keys are the headers and the values are the values from the line.
-  Closes the file when done.]##
-  if csvTbl.isOpen:
-    var idx = -1
-    for line in csvTbl.f.lines:
-      var result = newTable[string, string]()
-      let s = line.split(csvTbl.sep)
-      for idx, val in s:
-        if val.len != 0:
-          result[csvTbl.headers[idx]] = val
-      idx += 1
-      yield (idx, result)
-    csvTbl.f.close
-    csvTbl.isOpen = false
-  else:
-    raise newException(IOError, "file is not open. Read headers first.")
-
 proc open*(csvTbl: var CSVTblWriter, filen: string, headers: seq[string], sep='\t') =
   ##[Opens the csv file, writes the csv headers and keeps the file open.]##
   csvTbl.f = open(filen, fmWrite)
@@ -106,6 +70,58 @@ proc close*[T: CSVTblReader | CSVTblWriter](csvTbl: var T) =
   ##Closes the file.
   csvTbl.f.close
   csvTbl.isOpen = false
+
+iterator items*(csvTbl: var CSVTblReader): TableRef[string, string] =
+  ##[Reads the csv file line by line and returns a table for each line
+  where the keys are the headers and the values are the values from the line.
+  Closes the file when done.]##
+  if csvTbl.isOpen:
+    for line in csvTbl.f.lines:
+      var result = newTable[string, string]()
+      let s = line.split(csvTbl.sep)
+      for idx, val in s:
+        if val.len != 0:
+          result[csvTbl.headers[idx]] = val
+      yield result
+    csvTbl.f.close
+    csvTbl.isOpen = false
+  else:
+    raise newException(IOError, "file is not open. Read headers first.")
+
+iterator pairs*(csvTbl: var CSVTblReader): (int, TableRef[string, string]) =
+  ##[Reads the csv file line by line and returns the index and a table for each line
+  where the keys are the headers and the values are the values from the line.
+  Closes the file when done.]##
+  if csvTbl.isOpen:
+    var idx = -1
+    for line in csvTbl.f.lines:
+      var result = newTable[string, string]()
+      let s = line.split(csvTbl.sep)
+      for i, val in s:
+        if val.len != 0:
+          result[csvTbl.headers[i]] = val
+      idx += 1
+      yield (idx, result)
+    csvTbl.f.close
+    csvTbl.isOpen = false
+  else:
+    raise newException(IOError, "file is not open. Read headers first.")
+
+proc next*(csvTbl: var CSVTblReader): TableRef[string, string] =
+  result = newTable[string, string]()
+  if csvTbl.isOpen:
+    try:
+      let
+        ln = csvTbl.f.readLine()
+        s = ln.split(csvTbl.sep)
+      for i, val in s:
+        if val.len != 0:
+          result[csvTbl.headers[i]] = val
+
+    except IOError:
+      csvTbl.close
+  else:
+    raise newException(IOError, "file is not open. Read headers first.")
 
 
 when isMainModule:
