@@ -1,4 +1,4 @@
-##[Tools for handling CSV files with an API similar to Python's CSVDictReader and -Writer.
+##[Tools for handling CSV files (comma or tab-separated) with an API similar to Python's CSVDictReader and -Writer.
 The values in the rows are assigned to tables as values where the keys are the corresponding headers.
 
 *Example usage:*
@@ -31,7 +31,7 @@ type
   CSVTblReader* = object of CSVTblHandler
   CSVTblWriter* = object of CSVTblHandler
 
-proc open*(csvTbl: var CSVTblReader, filen: string, sep='\t'): seq[string] =
+proc open*(csvTbl: var CSVTblReader, filen: string, sep=','): seq[string] =
   ##[Opens the csv file, reads and returns the csv headers and keeps the file open for iteration.]##
   csvTbl.f = open(filen, fmRead)
   csvTbl.isOpen = true
@@ -44,7 +44,7 @@ proc open*(csvTbl: var CSVTblReader, filen: string, sep='\t'): seq[string] =
     result.add(header)
   csvTbl.headers = result
 
-proc open*(csvTbl: var CSVTblWriter, filen: string, headers: seq[string], sep='\t') =
+proc open*(csvTbl: var CSVTblWriter, filen: string, headers: seq[string], sep=',') =
   ##[Opens the csv file, writes the csv headers and keeps the file open.]##
   csvTbl.f = open(filen, fmWrite)
   csvTbl.isOpen = true
@@ -108,6 +108,7 @@ iterator pairs*(csvTbl: var CSVTblReader): (int, TableRef[string, string]) =
     raise newException(IOError, "file is not open. Read headers first.")
 
 proc next*(csvTbl: var CSVTblReader): TableRef[string, string] =
+  ##[Returns a new line from the csv file on each call. At the end of the file an empty table is returned (len == 0) and the csv file is closed.]##
   result = newTable[string, string]()
   if csvTbl.isOpen:
     try:
