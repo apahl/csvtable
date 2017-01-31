@@ -21,4 +21,4 @@ csvOut.close
 `nimble install csvtable`
 
 ## Documentation
-Just run `nimble doc`.
+Run `nimble gendoc`. Documentation can then be find in `doc/csvtable.html`.

@@ -12,7 +12,7 @@ requires "nim >= 0.15.3"
 const
   module = "csvtable"
 
-task doc, "build the documentation":
+task gendoc, "build the documentation":
   echo "\nBuilding documentation in doc/"
   let taskCmd = "nim -o:doc/" & module & ".html doc " & module & ".nim"
   exec taskCmd
