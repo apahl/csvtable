@@ -5,16 +5,21 @@ The values in the rows are assigned to tables as values where the keys are the c
 ## Example usage
 
 ```Nim
-import csvtable
-var csvTbl: CSVTblReader
-var csvOut: CSVTblWriter
-let headers = csvTbl.open("test.csv")
-echo headers
-csvOut.open("tmp.csv", headers)
-for d in csvTbl:
-    echo d
-    csvOut.writeRow(d)
-csvOut.close
+  import csvtable, strutils
+  var
+    csvIn: CSVTblReader
+    csvOut: CSVTblWriter
+  let
+    headersIn = csvIn.open("test.csv")
+    headersOut = @["position", "total"]  # all headers must be known at the creation of the file
+  echo headersIn
+  csvOut.open("tmp.csv", headersOut)
+  for dIn in csvIn:
+    var dOut = newTable[string, string]()
+    dOut["position"] = dIn["position"]
+    dOut["total"] = $(dIn["day1"].parseInt + dIn["day2"].parseInt)
+    csvOut.writeRow(dOut)
+  csvOut.close
 ```
 
 ## Installation
