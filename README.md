@@ -1,4 +1,4 @@
-# csvtable
+# csvtable ![nimble](https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png)
 Tools for handling CSV files (comma or tab-separated) with an API similar to Python's CSVDictReader and -Writer.
 The values in the rows are assigned to tables as values where the keys are the corresponding headers.
 
