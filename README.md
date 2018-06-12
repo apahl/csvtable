@@ -19,7 +19,8 @@ Please note: version 0.3.0 changes the API, have a look at the example and the d
     dOut["position"] = dIn["position"]
     dOut["total"] = $(dIn["day1"].parseInt + dIn["day2"].parseInt)
     csvOut.writeRow(dOut)
-  csvOut.close```
+  csvOut.close
+```
 
 ## Installation
 `nimble install csvtable`
