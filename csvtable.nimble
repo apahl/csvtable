@@ -14,6 +14,7 @@ const
 
 task gendoc, "build the documentation":
   echo "\nBuilding documentation in doc/"
+  mkDir "doc"
   let taskCmd = "nim -o:doc/" & module & ".html doc " & module & ".nim"
   exec taskCmd
 
