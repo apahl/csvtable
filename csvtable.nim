@@ -1,25 +1,24 @@
 ##[Tools for handling CSV files (comma or tab-separated) with an API similar to Python's CSVDictReader and -Writer.
 The values in the rows are assigned to tables as values where the keys are the corresponding headers.
 
+Please note: version 0.3.0 changes the API, have a look at the example and the doc. For the old API. use releases <0.3.0.
+
 *Example usage:*
 
 .. code-block::
     import csvtable, strutils
     var
-      csvIn: CSVTblReader
-      csvOut: CSVTblWriter
+      csvIn = newCSVTblReader("test.csv")
+    echo csvIn.headers
     let
-      headersIn = csvIn.open("test.csv")
       headersOut = @["position", "total"]  # all headers must be known at the creation of the file
-    echo headersIn
-    csvOut.open("tmp.csv", headersOut)
+    var csvOut = newCSVTblWriter("tmp.csv", headersOut)
     for dIn in csvIn:
       var dOut = newTable[string, string]()
       dOut["position"] = dIn["position"]
       dOut["total"] = $(dIn["day1"].parseInt + dIn["day2"].parseInt)
       csvOut.writeRow(dOut)
-    csvOut.close
-]##
+    csvOut.close]##
 
 import tables
 import strutils
@@ -36,28 +35,30 @@ type
   CSVTblReader* = object of CSVTblHandler
   CSVTblWriter* = object of CSVTblHandler
 
-proc open*(csvTbl: var CSVTblReader, filen: string, sep=','): seq[string] =
-  ##[Opens the csv file, reads and returns the csv headers and keeps the file open for iteration.]##
-  csvTbl.f = open(filen, fmRead)
-  csvTbl.isOpen = true
-  let firstline = csvTbl.f.readLine
+proc newCSVTblReader*(filen: string, sep=','): CSVTblReader =
+  ##[Opens the csv file, reads csv headers,
+  returns the instance and keeps the file open for iteration.]##
+  var headers: seq[string] = @[]
+  result.f = open(filen, fmRead)
+  result.isOpen = true
+  let firstline = result.f.readLine
   let splt = firstline.split(sep)
-  csvTbl.filen = filen
-  csvTbl.sep=sep
-  result = @[]
+  result.filen = filen
+  result.sep=sep
   for header in splt:
-    result.add(header)
-  csvTbl.headers = result
+    headers.add(header)
+  result.headers = headers
 
-proc open*(csvTbl: var CSVTblWriter, filen: string, headers: seq[string], sep=',') =
-  ##[Opens the csv file, writes the csv headers and keeps the file open.]##
-  csvTbl.f = open(filen, fmWrite)
-  csvTbl.isOpen = true
-  csvTbl.headers = headers
-  csvTbl.filen = filen
-  csvTbl.sep=sep
+proc newCSVTblWriter*(filen: string, headers: seq[string], sep=','): CSVTblWriter =
+  ##[Opens the csv file, writes the csv headers and keeps the file open.
+  Remember to manually close the file when done.]##
+  result.f = open(filen, fmWrite)
+  result.isOpen = true
+  result.headers = headers
+  result.filen = filen
+  result.sep=sep
   let line = headers.join($sep) & "\n"
-  csvTbl.f.write(line)
+  result.f.write(line)
 
 proc writeRow*(csvTbl: CSVTblWriter, row: TableRef[string, string]) =
   ##[Writes a row of values in the columns specified by the table.
@@ -133,13 +134,11 @@ proc next*(csvTbl: var CSVTblReader): TableRef[string, string] =
 when isMainModule:
   import strutils
   var
-    csvIn: CSVTblReader
-    csvOut: CSVTblWriter
+    csvIn = newCSVTblReader("test.csv")
+  echo csvIn.headers
   let
-    headersIn = csvIn.open("test.csv")
     headersOut = @["position", "total"]  # all headers must be known at the creation of the file
-  echo headersIn
-  csvOut.open("tmp.csv", headersOut)
+  var csvOut = newCSVTblWriter("tmp.csv", headersOut)
   for dIn in csvIn:
     var dOut = newTable[string, string]()
     dOut["position"] = dIn["position"]

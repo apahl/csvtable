@@ -1,13 +1,13 @@
 # Package
 
-version       = "0.2.0"
+version       = "0.3.0"
 author        = "Axel Pahl"
 description   = "Nim tools for handling CSV files with an API similar to Python\'s CSVDictReader and -Writer"
 license       = "MIT"
 
 # Dependencies
 
-requires "nim >= 0.15.3"
+requires "nim >= 0.18.1"
 
 const
   module = "csvtable"

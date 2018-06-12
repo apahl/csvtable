@@ -2,25 +2,24 @@
 Tools for handling CSV files (comma or tab-separated) with an API similar to Python's CSVDictReader and -Writer.
 The values in the rows are assigned to tables as values where the keys are the corresponding headers.
 
+Please note: version 0.3.0 changes the API, have a look at the example and the doc. For the old API. use releases <0.3.0.
+
 ## Example usage
 
 ```Nim
   import csvtable, strutils
   var
-    csvIn: CSVTblReader
-    csvOut: CSVTblWriter
+    csvIn = newCSVTblReader("test.csv")
+  echo csvIn.headers
   let
-    headersIn = csvIn.open("test.csv")
     headersOut = @["position", "total"]  # all headers must be known at the creation of the file
-  echo headersIn
-  csvOut.open("tmp.csv", headersOut)
+  var csvOut = newCSVTblWriter("tmp.csv", headersOut)
   for dIn in csvIn:
     var dOut = newTable[string, string]()
     dOut["position"] = dIn["position"]
     dOut["total"] = $(dIn["day1"].parseInt + dIn["day2"].parseInt)
     csvOut.writeRow(dOut)
-  csvOut.close
-```
+  csvOut.close```
 
 ## Installation
 `nimble install csvtable`
