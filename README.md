@@ -22,6 +22,10 @@ Please note: version 0.3.0 changes the API, have a look at the example and the d
   csvOut.close
 ```
 
+## Limitations
+
+This is a very simple implmentation of a CSV parser. It currently does not support quoted strings.
+
 ## Installation
 `nimble install csvtable`
 
