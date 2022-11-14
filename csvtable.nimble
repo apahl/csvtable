@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.3.0"
+version       = "0.3.2"
 author        = "Axel Pahl"
 description   = "Nim tools for handling CSV files with an API similar to Python\'s CSVDictReader and -Writer"
 license       = "MIT"

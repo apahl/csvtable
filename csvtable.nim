@@ -35,7 +35,7 @@ type
   CSVTblReader* = object of CSVTblHandler
   CSVTblWriter* = object of CSVTblHandler
 
-proc newCSVTblReader*(filen: string, sep=','): CSVTblReader =
+proc newCSVTblReader*(filen: string, sep = ','): CSVTblReader =
   ##[Opens the csv file, reads csv headers,
   returns the instance and keeps the file open for iteration.]##
   var headers: seq[string] = @[]
@@ -44,19 +44,20 @@ proc newCSVTblReader*(filen: string, sep=','): CSVTblReader =
   let firstline = result.f.readLine
   let splt = firstline.split(sep)
   result.filen = filen
-  result.sep=sep
+  result.sep = sep
   for header in splt:
     headers.add(header)
   result.headers = headers
 
-proc newCSVTblWriter*(filen: string, headers: seq[string], sep=','): CSVTblWriter =
+proc newCSVTblWriter*(filen: string, headers: seq[string],
+    sep = ','): CSVTblWriter =
   ##[Opens the csv file, writes the csv headers and keeps the file open.
   Remember to manually close the file when done.]##
   result.f = open(filen, fmWrite)
   result.isOpen = true
   result.headers = headers
   result.filen = filen
-  result.sep=sep
+  result.sep = sep
   let line = headers.join($sep) & "\n"
   result.f.write(line)
 
@@ -132,12 +133,11 @@ proc next*(csvTbl: var CSVTblReader): TableRef[string, string] =
 
 
 when isMainModule:
-  import strutils
   var
     csvIn = newCSVTblReader("test.csv")
   echo csvIn.headers
   let
-    headersOut = @["position", "total"]  # all headers must be known at the creation of the file
+    headersOut = @["position", "total"] # all headers must be known at the creation of the file
   var csvOut = newCSVTblWriter("tmp.csv", headersOut)
   for dIn in csvIn:
     var dOut = newTable[string, string]()
